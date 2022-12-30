@@ -7,6 +7,7 @@ https://velog.io/@shawnhansh/AWS-RDS-DBeaver%EC%97%90-%EC%97%B0%EA%B2%B0%ED%95%9
 <br>
 
 https://mimah.tistory.com/entry/MySQL-MySQL-8%EC%97%90%EC%84%9C-DATE-default-%ED%98%84%EC%9E%AC-%EB%82%A0%EC%A7%9C
+<br>
 date는 예약어인 것 같아서 created_date 로 컬럼명 변경
 <br>
 CREATE TABLE borard
