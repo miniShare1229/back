@@ -22,3 +22,9 @@ CREATE TABLE borard
 	heart varchar(500),
 	PRIMARY KEY (board_id)
 );
+
+
+ER_ACCESS_DENIED_ERROR: Access denied for user 'root < 에러 해결법 <br>
+https://yoo11052.tistory.com/42<br>
+포트 변경법<br>
+https://languagestory.tistory.com/12<br>
