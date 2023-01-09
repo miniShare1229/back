@@ -3,18 +3,22 @@
 //프론트단에서 동작
 
 const id = document.querySelector("#id"),
+  name = document.querySelector("#name"),
   psword = document.querySelector("#password"),
-  loginBtn = document.querySelector("#button");
+  confirmPsword = document.querySelector("#confirm-password"),
+  registerBtn = document.querySelector("#button");
 
-loginBtn.addEventListener("click", login);
+registerBtn.addEventListener("click", register);
 
-function login() {
+function register() {
   const req = {
     id: id.value,
+    name: name.value,
     psword: psword.value,
+    confirmPsword: confirmPsword.value,
   };
 
-  fetch("/login", {
+  fetch("/register", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -24,7 +28,7 @@ function login() {
     .then((res) => res.json())
     .then((res) => {
       if (res.success) {
-        location.href = "/";
+        location.href = "/login";
       } else {
         alert(res.msg);
       }
