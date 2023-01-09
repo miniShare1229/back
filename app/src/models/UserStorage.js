@@ -1,15 +1,22 @@
 "use strict";
 
-class UserStorage {
-  static #users = {
-    //#붙여서 외부에서 접근불가 데이터 은닉화 작업
-    id: ["홍길동", "임꺽정", "개발"],
-    psword: ["1234", "1234", "1234"],
-    name: ["기린", "하마", "코끼리"],
-  };
+const fs = require("fs").promises;
 
+class UserStorage {
+  static #getUserInfo(data, id) {
+    const users = JSON.parse(data);
+    const idx = users.id.indexOf(id);
+    const userKeys = Object.keys(users); // => [id, psword, name]
+    const userInfo = userKeys.reduce((newUser, info) => {
+      newUser[info] = users[info][idx];
+      return newUser;
+    }, {});
+
+    //console.log(userInfo);
+    return userInfo;
+  }
   static getUsers(...fields) {
-    const users = this.#users;
+    //const users = this.#users;
     //reduce로 쪼개기
     const newUsers = fields.reduce((newUsers, field) => {
       if (users.hasOwnProperty(field)) {
@@ -21,22 +28,19 @@ class UserStorage {
   }
 
   static getUserInfo(id) {
-    const users = this.#users;
-    const idx = users.id.indexOf(id);
-    const userKeys = Object.keys(users); // => [id, psword, name]
-    const userInfo = userKeys.reduce((newUser, info) => {
-      newUser[info] = users[info][idx];
-      return newUser;
-    }, {});
-
-    return userInfo;
+    return fs
+      .readFile("./src/databases/users.json")
+      .then((data) => {
+        return this.#getUserInfo(data, id);
+      })
+      .catch(console.error);
   }
 
   static save(userInfo) {
-    const users = this.#users;
-    users.id.push(userInfo.id);
-    users.name.push(userInfo.name);
-    users.psword.push(userInfo.psword);
+    //const users = this.#users;
+    // users.id.push(userInfo.id);
+    // users.name.push(userInfo.name);
+    // users.psword.push(userInfo.psword);
   }
 }
 
