@@ -22,7 +22,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // app.use("/", home); // use -> 미들웨어를 등록해주는 메서드
 
 // 프론트 html 랜더링
-app.use(express.static(path.join(__dirname, '/src/views/front')));
+app.use(express.static(path.join(__dirname, '/src/views/front'))
+);
+
+// /test로 get 요청하면
+app.get('/test', (req, res)=>{
+  console.log("app.get API");
+  
+  // json형식 데이터로 응답
+  res.json({ok: true, test: 123})
+})
 
 // 프론트측이 url 라우팅 처리하도록 설정(SPA, CSR) 
 app.get('*', function (req, res){
