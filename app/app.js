@@ -21,21 +21,6 @@ const conn = {
   database: "mindb",
 };
 
-const connection = mysql.createConnection(conn); // DB 커넥션 생성
-connection.connect(); // DB 접속
-
-const signUp =
-  "INSERT INTO `user` (`id`,`pwd`,`nickname`,`created_date`) VALUES ('test','1111','test','2022-01-03');";
-
-connection.query(signUp, function (err, results, fields) {
-  // testQuery 실행
-  if (err) {
-    console.log(err);
-  }
-  console.log(results);
-});
-
-connection.end();
 //라우팅
 // const home = require("./src/routes/home");
 
@@ -50,11 +35,49 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "/src/views/front")));
 
 // /test로 get 요청하면
-app.get("/test", (req, res) => {
-  console.log(signUp);
+app.post("/sign-up", (req, res) => {
+  // console.log("성공");
+  // console.log("res:::::", res);
+  console.log(req.body);
+  const connection = mysql.createConnection(conn); // DB 커넥션 생성
+  connection.connect(function (err) {
+    if (err) throw err;
+    //console.log("Connected");
+    const sql = `INSERT INTO user (id, pwd, nickname, created_date) VALUES ('${req.body.id}','${req.body.pwd}','${req.body.nickname}','2022-01-03')`;
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log("1 record inserted");
+    });
+  }); // DB 접속
+
+  //connection.end();
+  // console.log(signUp);
 
   // json형식 데이터로 응답
-  res.json(signUp);
+  res.json();
+});
+
+app.post("/test", (req, res) => {
+  console.log("dddddddddddddd");
+  // console.log("성공");
+  // console.log("res:::::", res);
+  console.log(req.body);
+  const connection = mysql.createConnection(conn); // DB 커넥션 생성
+  connection.connect(function (err) {
+    if (err) throw err;
+    //console.log("Connected");
+    const sql = `INSERT INTO user (id, pwd, nickname, created_date) VALUES ('${req.body.id}','${req.body.pwd}','${req.body.nickname}','2022-01-03')`;
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log("1 record inserted");
+    });
+  }); // DB 접속
+
+  //connection.end();
+  // console.log(signUp);
+
+  // json형식 데이터로 응답
+  res.json();
 });
 
 // 프론트측이 url 라우팅 처리하도록 설정(SPA, CSR)
