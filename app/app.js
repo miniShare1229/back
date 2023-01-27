@@ -35,7 +35,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "/src/views/front")));
 
 // /test로 get 요청하면
-app.post("/sign-up", (req, res) => {
+/*
+app.post("/register", (req, res) => {
   // console.log("성공");
   // console.log("res:::::", res);
   console.log(req.body);
@@ -56,28 +57,48 @@ app.post("/sign-up", (req, res) => {
   // json형식 데이터로 응답
   res.json();
 });
+*/
+//로그인 기능
+app.post("/login", (req, res) => {
+  //const id = req.body.id;
+  // const pwd = req.body.pwd;
 
-app.post("/test", (req, res) => {
-  console.log("dddddddddddddd");
-  // console.log("성공");
-  // console.log("res:::::", res);
-  console.log(req.body);
+  // console.log(id);
+  //console.log(pwd);
   const connection = mysql.createConnection(conn); // DB 커넥션 생성
   connection.connect(function (err) {
-    if (err) throw err;
-    //console.log("Connected");
-    const sql = `INSERT INTO user (id, pwd, nickname, created_date) VALUES ('${req.body.id}','${req.body.pwd}','${req.body.nickname}','2022-01-03')`;
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log("1 record inserted");
+    // if (err) throw err;
+    connection.query("select id from user", (err, rows) => {
+      if (err) {
+        throw err;
+      } else {
+        //결과값을 배열로 가져오기때문에 체크해줘야함
+        if (rows.legth < 0) {
+          return;
+        }
+        for (let i = 0; i < rows.length; i++) {
+          //console.log(rows[i].id);
+          if (req.body.id === rows[i].id) {
+            console.log("ok");
+            return res.status(200).json({
+              code: 200,
+              message: "성공",
+            });
+          } else {
+            console.log("x");
+            return res.status(500).json({
+              code: 500,
+              message: "아이디가 맞지않습니다.",
+            });
+          }
+        }
+        //return res.send();
+      }
     });
   }); // DB 접속
 
-  //connection.end();
-  // console.log(signUp);
-
   // json형식 데이터로 응답
-  res.json();
+  //res.json();
 });
 
 // 프론트측이 url 라우팅 처리하도록 설정(SPA, CSR)
