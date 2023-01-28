@@ -62,34 +62,27 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
   //const id = req.body.id;
   // const pwd = req.body.pwd;
-
-  // console.log(id);
-  //console.log(pwd);
   const connection = mysql.createConnection(conn); // DB 커넥션 생성
   connection.connect(function (err) {
-    // if (err) throw err;
-    connection.query("select id from user", (err, rows) => {
+    // if (err) throw err;'
+    connection.query("select id, pwd, nickname from user", (err, rows) => {
       if (err) {
         throw err;
       } else {
-        //결과값을 배열로 가져오기때문에 체크해줘야함
-        if (rows.legth < 0) {
-          return;
-        }
         for (let i = 0; i < rows.length; i++) {
-          //console.log(rows[i].id);
-          if (req.body.id === rows[i].id) {
+          if (req.body.id === rows[i].id && req.body.pwd === rows[i].pwd) {
             console.log("ok");
             return res.status(200).json({
               code: 200,
               message: "성공",
             });
           } else {
-            console.log("x");
-            return res.status(500).json({
-              code: 500,
-              message: "아이디가 맞지않습니다.",
-            });
+            //else 시 로직작성
+            console.log("아이디 비밀번호를 다시확인해주세요");
+            // return res.status(200).json({
+            //   code: 200,
+            //   message: "성공",
+            // });
           }
         }
         //return res.send();
