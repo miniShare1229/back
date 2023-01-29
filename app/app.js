@@ -3,7 +3,9 @@
 const express = require("express");
 const app = express();
 const path = require("path");
+const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const FileStore = require("session-file-store")(session);
 
 // 프론트, 서버 ajax 통신 cors 처리
 var cors = require("cors");
@@ -31,6 +33,7 @@ app.set("views", "/src/views/front");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // app.use("/", home); // use -> 미들웨어를 등록해주는 메서드
+app.use(cookieParser());
 app.use(
   // 미들웨어 적용
   session({
@@ -39,10 +42,11 @@ app.use(
     secret: "@mi@ni#",
     resave: false,
     saveUninitialized: true,
-    cookie: {
-      httpOnly: true,
-      secure: true,
-    },
+    store: new FileStore(),
+    // cookie: {
+    //   httpOnly: true,
+    //   secure: true,
+    // },
   })
 );
 
@@ -72,6 +76,7 @@ app.post("/register", (req, res) => {
 });
 
 //로그인 기능
+// 세션 유지되면 루트 화면을 띄웠을 때 로그아웃 나와야함
 app.post("/login", async (req, res) => {
   console.log("로그인 실행");
   const connection = mysql.createConnection(conn);
@@ -90,16 +95,41 @@ app.post("/login", async (req, res) => {
             message: "실패",
           });
         } else {
-          //console.log((req.session.user = rows[0]));
+          console.log("로그인 성공입니다.");
+          console.log(req.session.userid === req.body.id);
+          if (req.session.userid === req.body.id) {
+            console.log("세션 유지중");
+            return res.json({ message: "session 유지중" });
+          }
+          req.session.save((error) => {
+            if (error) console.log(error);
+          });
+          req.session.userid = req.body.id;
+          // console.log(req.session.id);
+          // console.log(req.sessionID);
           res.status(200).json({
             code: 200,
             message: "성공",
-            body: rows[0].constructor.nickname,
+            // body: req.sessionID,
           });
         }
       }
     );
   });
+});
+
+// 이름 등록
+// app.post("/", (req, res) => {
+//   const { name } = req.body;
+//   req.session.user = name;
+//   res.redirect("/");
+// });
+
+// 세션 삭제
+app.get("/delete", (req, res) => {
+  console.log("세션 제거");
+  req.session.destroy();
+  res.redirect("/");
 });
 
 // 프론트측이 url 라우팅 처리하도록 설정(SPA, CSR)
