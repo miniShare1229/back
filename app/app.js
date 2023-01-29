@@ -85,7 +85,9 @@ app.post("/login", async (req, res) => {
     connection.query(
       "select id, pwd, nickname from user where id=? and pwd=?",
       [req.body.id, req.body.pwd],
+
       (err, rows) => {
+        //console.log(rows[0].nickname);
         if (rows.length === 0) {
           if (err) {
             throw err;
@@ -110,7 +112,7 @@ app.post("/login", async (req, res) => {
           res.status(200).json({
             code: 200,
             message: "성공",
-            // body: req.sessionID,
+            body: rows[0].nickname,
           });
         }
       }
