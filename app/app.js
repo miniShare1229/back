@@ -58,25 +58,53 @@ app.post("/register", (req, res) => {
   const connection = mysql.createConnection(conn); // DB 커넥션 생성
   connection.connect(function (err) {
     if (err) throw err;
-    //console.log("Connected");
-    const sql = `INSERT INTO user (id, pwd, nickname, created_date) VALUES ('${req.body.id}','${req.body.pwd}','${req.body.nickname}','2022-01-03')`;
-    connection.query(sql, function (err, result) {
-      if (err) {
-        throw err;
+    connection.query(
+      "select id, nickname from user where id=?",
+      [req.body.id],
+      (err, rows) => {
+        if (rows.length === 0) {
+          console.log("내부 if 실행");
+          const sql = `INSERT INTO user (id, pwd, nickname, created_date) VALUES ('${req.body.id}','${req.body.pwd}','${req.body.nickname}','2022-01-03')`;
+          connection.query(sql, function (err, result) {
+            if (err) {
+              throw err;
+            }
+            console.log("회원가입 완료");
+            res.status(200).json({
+              code: 200,
+              message: "실패",
+            });
+          });
+        } else {
+          console.log("중복된 아이디입니다");
+          res.status(400).json({
+            code: 400,
+            message: "실패",
+          });
+        }
       }
-      console.log("회원가입 완료");
-    });
+    );
+    //console.log("Connected");
+
+    // const sql = `INSERT INTO user (id, pwd, nickname, created_date) VALUES ('${req.body.id}','${req.body.pwd}','${req.body.nickname}','2022-01-03')`;
+    // connection.query(sql, function (err, result) {
+    //   if (err) {
+    //     throw err;
+    //   }
+    //   console.log("회원가입 완료");
+    // });
   }); // DB 접속
 
   //connection.end();
   // console.log(signUp);
 
   // json형식 데이터로 응답
-  res.json();
+  //res.json();
 });
 
 //로그인 기능
 // 세션 유지되면 루트 화면을 띄웠을 때 로그아웃 나와야함
+/*
 app.post("/login", async (req, res) => {
   console.log("로그인 실행");
   const connection = mysql.createConnection(conn);
@@ -112,13 +140,14 @@ app.post("/login", async (req, res) => {
           res.status(200).json({
             code: 200,
             message: "성공",
-            body: rows[0].nickname,
+            nickname: rows[0].nickname,
           });
         }
       }
     );
   });
 });
+*/
 
 // 이름 등록
 // app.post("/", (req, res) => {
