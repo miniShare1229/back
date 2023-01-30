@@ -54,6 +54,7 @@ app.use(
 app.use(express.static(path.join(__dirname, "/src/views/front")));
 
 app.post("/register", (req, res) => {
+  console.log("회원가입 실행");
   //console.log(req.body);
   const connection = mysql.createConnection(conn); // DB 커넥션 생성
   connection.connect(function (err) {
@@ -63,7 +64,6 @@ app.post("/register", (req, res) => {
       [req.body.id],
       (err, rows) => {
         if (rows.length === 0) {
-          console.log("내부 if 실행");
           const sql = `INSERT INTO user (id, pwd, nickname, created_date) VALUES ('${req.body.id}','${req.body.pwd}','${req.body.nickname}','2022-01-03')`;
           connection.query(sql, function (err, result) {
             if (err) {
@@ -79,32 +79,15 @@ app.post("/register", (req, res) => {
           console.log("중복된 아이디입니다");
           res.status(400).json({
             code: 400,
-            message: "실패",
+            message: "중복된 아이디",
           });
         }
       }
     );
-    //console.log("Connected");
-
-    // const sql = `INSERT INTO user (id, pwd, nickname, created_date) VALUES ('${req.body.id}','${req.body.pwd}','${req.body.nickname}','2022-01-03')`;
-    // connection.query(sql, function (err, result) {
-    //   if (err) {
-    //     throw err;
-    //   }
-    //   console.log("회원가입 완료");
-    // });
   }); // DB 접속
-
-  //connection.end();
-  // console.log(signUp);
-
-  // json형식 데이터로 응답
-  //res.json();
 });
 
 //로그인 기능
-// 세션 유지되면 루트 화면을 띄웠을 때 로그아웃 나와야함
-/*
 app.post("/login", async (req, res) => {
   console.log("로그인 실행");
   const connection = mysql.createConnection(conn);
@@ -135,8 +118,6 @@ app.post("/login", async (req, res) => {
             if (error) console.log(error);
           });
           req.session.userid = req.body.id;
-          // console.log(req.session.id);
-          // console.log(req.sessionID);
           res.status(200).json({
             code: 200,
             message: "성공",
@@ -147,7 +128,6 @@ app.post("/login", async (req, res) => {
     );
   });
 });
-*/
 
 // 이름 등록
 // app.post("/", (req, res) => {
@@ -156,9 +136,10 @@ app.post("/login", async (req, res) => {
 //   res.redirect("/");
 // });
 
-// 세션 삭제
+//로그아웃 기능
 app.get("/delete", (req, res) => {
   console.log("세션 제거");
+  console.log("유저 로그아웃 함");
   req.session.destroy();
   res.redirect("/");
 });
