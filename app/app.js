@@ -121,12 +121,21 @@ app.post("/login", async (req, res) => {
           res.status(200).json({
             code: 200,
             message: "성공",
+            id: rows[0].id,
             nickname: rows[0].nickname,
           });
         }
       }
     );
   });
+});
+
+app.post("/privateSubmit", (req, res) => {
+  console.log("dddd");
+});
+
+app.post("/sharedSubmit", (req, res) => {
+  console.log("dddd");
 });
 
 // 이름 등록
