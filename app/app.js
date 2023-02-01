@@ -117,8 +117,9 @@ app.post("/login", async (req, res) => {
             return res.status(200).json({
               code: 200,
               message: "세션 유지중",
-              id: rows[0].id,
+              user: rows[0].id,
               nickname: rows[0].nickname,
+              id: rows[0].user_id,
             });
           }
           req.session.save((error) => {
