@@ -77,8 +77,8 @@ app.post("/register", (req, res) => {
           });
         } else {
           console.log("중복된 아이디입니다");
-          res.status(400).json({
-            code: 400,
+          res.status(409).json({
+            code: 409,
             message: "중복된 아이디",
           });
         }
@@ -94,7 +94,7 @@ app.post("/login", async (req, res) => {
   connection.connect(function (err) {
     // if (err) throw err;'
     connection.query(
-      "select id, pwd, nickname from user where id=? and pwd=?",
+      "select user_id, id, pwd, nickname from user where id=? and pwd=?",
       [req.body.id, req.body.pwd],
 
       (err, rows) => {
@@ -103,26 +103,35 @@ app.post("/login", async (req, res) => {
           if (err) {
             throw err;
           }
-          res.status(400).json({
-            code: 400,
-            message: "실패",
+          res.status(404).json({
+            code: 404,
+            message: "아이디나 비밀번호를 확인해주세요.",
           });
         } else {
           console.log("로그인 성공입니다.");
           console.log(req.session.userid === req.body.id);
           if (req.session.userid === req.body.id) {
             console.log("세션 유지중");
-            return res.json({ message: "session 유지중" });
+            //return res.json({ message: "session 유지중" });
+            console.log(rows);
+            return res.status(200).json({
+              code: 200,
+              message: "세션 유지중",
+              id: rows[0].id,
+              nickname: rows[0].nickname,
+            });
           }
           req.session.save((error) => {
             if (error) console.log(error);
           });
           req.session.userid = req.body.id;
+          console.log(rows);
           res.status(200).json({
             code: 200,
             message: "성공",
-            id: rows[0].id,
+            user: rows[0].id,
             nickname: rows[0].nickname,
+            id: rows[0].user_id,
           });
         }
       }
@@ -131,7 +140,30 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/privateSubmit", (req, res) => {
-  console.log("dddd");
+  console.log("privateSubmit 요청");
+  console.log(req.body.title);
+  console.log(req.body.icon);
+  console.log(req.body.content);
+  //console.log(req.body);
+  const connection = mysql.createConnection(conn); // DB 커넥션 생성
+  connection.connect(function (err) {
+    if (err) throw err;
+    connection.query((err, rows) => {
+      {
+        const sql = `INSERT INTO board (user_id, title, content, icon, created_date) VALUES ('${req.body.userId}', '${req.body.title}','${req.body.icon}','${req.body.content}','2022-01-03')`;
+        connection.query(sql, function (err, result) {
+          if (err) {
+            throw err;
+          }
+          console.log("글등록 완료");
+          res.status(200).json({
+            code: 200,
+            message: "성공",
+          });
+        });
+      }
+    });
+  }); // DB 접속
 });
 
 app.post("/sharedSubmit", (req, res) => {
