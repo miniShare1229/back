@@ -113,7 +113,6 @@ app.post("/login", async (req, res) => {
           if (req.session.userid === req.body.id) {
             console.log("세션 유지중");
             //return res.json({ message: "session 유지중" });
-            console.log(rows);
             return res.status(200).json({
               code: 200,
               message: "세션 유지중",
@@ -141,17 +140,13 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/privateSubmit", (req, res) => {
-  console.log("privateSubmit 요청");
-  console.log(req.body.title);
-  console.log(req.body.icon);
-  console.log(req.body.content);
   //console.log(req.body);
   const connection = mysql.createConnection(conn); // DB 커넥션 생성
   connection.connect(function (err) {
     if (err) throw err;
     connection.query((err, rows) => {
       {
-        const sql = `INSERT INTO board (user_id, title, content, icon, created_date) VALUES ('${req.body.userId}', '${req.body.title}','${req.body.icon}','${req.body.content}','2022-01-03')`;
+        const sql = `INSERT INTO board (user_id, title, content, icon, genre, board_st, created_date) VALUES ('${req.body.id}', '${req.body.title}','${req.body.content}','${req.body.icon}', '영화', 'p', '2022-01-03')`;
         connection.query(sql, function (err, result) {
           if (err) {
             throw err;
@@ -159,7 +154,7 @@ app.post("/privateSubmit", (req, res) => {
           console.log("글등록 완료");
           res.status(200).json({
             code: 200,
-            message: "성공",
+            message: "글등록 완료",
           });
         });
       }
