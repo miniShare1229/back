@@ -183,7 +183,10 @@ app.get("/delete", (req, res) => {
   console.log("세션 제거");
   console.log("유저 로그아웃 함");
   req.session.destroy();
-  res.redirect("/");
+  res.status(200).json({
+    code: 200,
+    message: "로그아웃",
+  });
 });
 
 // 프론트측이 url 라우팅 처리하도록 설정(SPA, CSR)
